@@ -18,12 +18,16 @@ public class usersCRUDService {
     public Response userById(@QueryParam("id") String userId) {
         try {
             JSONObject response;
+            Response.Status responseCode = Response.Status.OK;
             if (userId == null || userId.length() == 0) {
                 response = dbConnection.getCollection("users");
             } else {
                 response = dbConnection.getDocument("users", userId);
+                if (response.has("error")) {
+                    responseCode = Response.Status.BAD_REQUEST;
+                }
             }
-            return Response.status(Response.Status.OK).entity(response.toString()).build();
+            return Response.status(responseCode).entity(response.toString()).build();
         } catch (Exception e) {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
